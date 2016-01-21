@@ -3,9 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Networking", "Networking\Networking.fsproj", "{3DAC205E-17D7-47FC-8C32-F6DE53F22612}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiDroid", "WiDroid\WiDroid.csproj", "{93D617C1-320B-46D0-A1BB-B8B61E8F60BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helper", "Helper\Helper.csproj", "{499CC2FE-7BD5-45BC-95C7-B7166ECE6584}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Tests.UnitTests", "Tests.UnitTests\Tests.UnitTests.fsproj", "{C1EF1ABC-0446-415F-A234-42EAFF44E512}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Core.Networking", "Core.Networking\Core.Networking.fsproj", "{4BE0A897-F696-4927-B45B-D252471C4EC3}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Core.Encryption", "Core.Encryption\Core.Encryption.fsproj", "{210970C4-40B4-46CA-9112-F56BCBF902B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +19,26 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3DAC205E-17D7-47FC-8C32-F6DE53F22612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3DAC205E-17D7-47FC-8C32-F6DE53F22612}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3DAC205E-17D7-47FC-8C32-F6DE53F22612}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3DAC205E-17D7-47FC-8C32-F6DE53F22612}.Release|Any CPU.Build.0 = Release|Any CPU
 		{93D617C1-320B-46D0-A1BB-B8B61E8F60BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{93D617C1-320B-46D0-A1BB-B8B61E8F60BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93D617C1-320B-46D0-A1BB-B8B61E8F60BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93D617C1-320B-46D0-A1BB-B8B61E8F60BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{499CC2FE-7BD5-45BC-95C7-B7166ECE6584}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{499CC2FE-7BD5-45BC-95C7-B7166ECE6584}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{499CC2FE-7BD5-45BC-95C7-B7166ECE6584}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{499CC2FE-7BD5-45BC-95C7-B7166ECE6584}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1EF1ABC-0446-415F-A234-42EAFF44E512}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1EF1ABC-0446-415F-A234-42EAFF44E512}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1EF1ABC-0446-415F-A234-42EAFF44E512}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1EF1ABC-0446-415F-A234-42EAFF44E512}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BE0A897-F696-4927-B45B-D252471C4EC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BE0A897-F696-4927-B45B-D252471C4EC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BE0A897-F696-4927-B45B-D252471C4EC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BE0A897-F696-4927-B45B-D252471C4EC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{210970C4-40B4-46CA-9112-F56BCBF902B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{210970C4-40B4-46CA-9112-F56BCBF902B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{210970C4-40B4-46CA-9112-F56BCBF902B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{210970C4-40B4-46CA-9112-F56BCBF902B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

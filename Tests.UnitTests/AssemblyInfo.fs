@@ -1,4 +1,4 @@
-﻿namespace Networking.AssemblyInfo
+﻿namespace Tests.UnitTests.AssemblyInfo
 
 open System.Reflection
 open System.Runtime.CompilerServices
@@ -7,11 +7,11 @@ open System.Runtime.InteropServices
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[<assembly: AssemblyTitle("Networking")>]
+[<assembly: AssemblyTitle("Tests.UnitTests")>]
 [<assembly: AssemblyDescription("")>]
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("")>]
-[<assembly: AssemblyProduct("Networking")>]
+[<assembly: AssemblyProduct("Tests.UnitTests")>]
 [<assembly: AssemblyCopyright("Copyright ©  2016")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]
@@ -22,7 +22,7 @@ open System.Runtime.InteropServices
 [<assembly: ComVisible(false)>]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[<assembly: Guid("3dac205e-17d7-47fc-8c32-f6de53f22612")>]
+[<assembly: Guid("c1ef1abc-0446-415f-a234-42eaff44e512")>]
 
 // Version information for an assembly consists of the following four values:
 // 
