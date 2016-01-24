@@ -6,6 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
+using WiDroid.ViewModels;
+using WiDroid.Views;
+
 namespace WiDroid
 {
     /// <summary>
@@ -13,5 +16,17 @@ namespace WiDroid
     /// </summary>
     public partial class App : Application
     {
+        private void App_OnStartup(object sender, StartupEventArgs e)
+        {
+            // Show main window
+            MainWindow mainWindow = new MainWindow();
+            MainViewModel mainViewModel = new MainViewModel();
+            mainWindow.DataContext = mainViewModel;
+            mainWindow.ViewModel = mainViewModel;
+
+            FlowManager.Instance.AppWindow = mainWindow;
+
+            mainWindow.Show();
+        }
     }
 }

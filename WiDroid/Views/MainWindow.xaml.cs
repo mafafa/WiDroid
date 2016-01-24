@@ -10,17 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WiDroid.ViewModels;
 
-namespace WiDroid
+namespace WiDroid.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window, IView<MainViewModel>
     {
+        private MainViewModel _mainViewModel;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -28,15 +29,8 @@ namespace WiDroid
 
         public MainViewModel ViewModel
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get { return _mainViewModel; }
+            set { _mainViewModel = value; }
         }
     }
 }

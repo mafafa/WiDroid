@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using WiDroid.Views;
+using WiDroid.ViewModels;
+
 namespace WiDroid
 {
     public class FlowManager
