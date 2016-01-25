@@ -13,6 +13,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Core.Networking", "Core.Net
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Core.Encryption", "Core.Encryption\Core.Encryption.fsproj", "{210970C4-40B4-46CA-9112-F56BCBF902B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicWPF", "BasicWPF\BasicWPF.csproj", "{3B068656-55D5-4DDC-8A77-19AD7CAFFCC6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{210970C4-40B4-46CA-9112-F56BCBF902B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{210970C4-40B4-46CA-9112-F56BCBF902B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{210970C4-40B4-46CA-9112-F56BCBF902B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B068656-55D5-4DDC-8A77-19AD7CAFFCC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B068656-55D5-4DDC-8A77-19AD7CAFFCC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B068656-55D5-4DDC-8A77-19AD7CAFFCC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B068656-55D5-4DDC-8A77-19AD7CAFFCC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

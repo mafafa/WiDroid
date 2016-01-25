@@ -56,7 +56,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -64,9 +63,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FlowManager.cs" />
-    <Compile Include="IView.cs" />
-    <Compile Include="IViewModel.cs" />
     <Page Include="Views\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -100,8 +96,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ViewModels\" />
     <Folder Include="Views\DataTemplates\" />
     <Folder Include="Views\Styles\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BasicWPF\BasicWPF.csproj">
+      <Project>{3b068656-55d5-4ddc-8a77-19ad7caffcc6}</Project>
+      <Name>BasicWPF</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

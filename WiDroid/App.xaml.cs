@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-using WiDroid.ViewModels;
+using BasicWPF.MVVM;
 using WiDroid.Views;
 
 namespace WiDroid

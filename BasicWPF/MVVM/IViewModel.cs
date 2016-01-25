@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WiDroid
+namespace BasicWPF.MVVM
 {
-    public interface IView<TViewModel> where TViewModel : IViewModel
+    public interface IViewModel : INotifyPropertyChanged
     {
-        TViewModel ViewModel { get; set; }
     }
 }

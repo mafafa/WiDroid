@@ -11,14 +11,15 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using WiDroid.ViewModels;
+
+using BasicWPF.MVVM;
 
 namespace WiDroid.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IView<MainViewModel>
+    public partial class MainWindow : Window, IView<MainViewModel>, IMainWindow
     {
         private MainViewModel _mainViewModel;
 

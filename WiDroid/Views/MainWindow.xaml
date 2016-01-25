@@ -4,17 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:WiDroid.Views"
-        xmlns:viewModels="clr-namespace:WiDroid.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="15*"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="85*"/>
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="90*"/>
+        </Grid.RowDefinitions>
 
-        <StackPanel Grid.Column="0">
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
             <Button>Music</Button>
             <!--<Button Command="{Binding ChangeToQuickLookCommand}">QuickLook Request</Button>-->
             <Button>Pictures</Button>
@@ -23,8 +22,27 @@
             <Button>Settings</Button>
         </StackPanel>
 
+        <Separator Grid.Row="1" />
+
+        <ContentControl Grid.Row="2" Content="{Binding CurrentViewModel}" />
+
+        <!--<Grid.ColumnDefinitions>
+            <ColumnDefinition Width="15*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="85*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0">
+            <Button>Music</Button>-->
+            <!--<Button Command="{Binding ChangeToQuickLookCommand}">QuickLook Request</Button>-->
+            <!--<Button>Pictures</Button>
+            <Button>Videos</Button>
+            <Button>Files</Button>
+            <Button>Settings</Button>
+        </StackPanel>
+
         <Separator Grid.Column="1" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
 
-        <ContentControl Grid.Column="2" Content="{Binding CurrentViewModel}" />
+        <ContentControl Grid.Column="2" Content="{Binding CurrentViewModel}" />-->
     </Grid>
 </Window>

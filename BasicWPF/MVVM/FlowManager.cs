@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BasicWPF.MVVM;
 
-using WiDroid.Views;
-using WiDroid.ViewModels;
-
-namespace WiDroid
+namespace BasicWPF.MVVM
 {
     public class FlowManager
     {
         private static FlowManager _instance;
 
-        private MainWindow _mainWindow;
+        private IMainWindow _mainWindow;
         private ICollection<IViewModel> _viewModels;
 
         private FlowManager()
@@ -57,7 +55,7 @@ namespace WiDroid
             }
         }
 
-        public MainWindow AppWindow { get; set; }
+        public IMainWindow AppWindow { get; set; }
 
         public ICollection<IViewModel> ViewModels { get; private set; }
     }
