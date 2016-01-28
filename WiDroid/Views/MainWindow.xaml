@@ -12,19 +12,38 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="90*"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="75*"/>
+            <ColumnDefinition Width="25*"/>
+        </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="0">
+        <UniformGrid Rows="1" Columns="5" Grid.Row="0" Grid.Column="0">
+            <UniformGrid.Resources>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Margin" Value="10,0,10,0"/>
+                </Style>
+            </UniformGrid.Resources>
+            
             <Button>Music</Button>
             <!--<Button Command="{Binding ChangeToQuickLookCommand}">QuickLook Request</Button>-->
             <Button>Pictures</Button>
             <Button>Videos</Button>
             <Button>Files</Button>
             <Button>Settings</Button>
-        </StackPanel>
+        </UniformGrid>
 
-        <Separator Grid.Row="1" />
+        <DockPanel Grid.Row="0" Grid.Column="1">
+            <DockPanel.Resources>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Margin" Value="10,0,10,0"/>
+                </Style>
+            </DockPanel.Resources>
+            <Button HorizontalAlignment="Right" Padding="25,0,25,0">SYNC</Button>
+        </DockPanel>
 
-        <ContentControl Grid.Row="2" Content="{Binding CurrentViewModel}" />
+        <Separator Grid.Row="1" Grid.ColumnSpan="2"/>
+
+        <ContentControl Grid.Row="2" Grid.ColumnSpan="2" Content="{Binding CurrentViewModel}" />
 
         <!--<Grid.ColumnDefinitions>
             <ColumnDefinition Width="15*"/>
