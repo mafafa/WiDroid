@@ -9,15 +9,25 @@ namespace BasicWPF.MVVM
 {
     public class FlowManager
     {
+        #region Fields
+
         private static FlowManager _instance;
 
         private IMainWindow _mainWindow;
         private ICollection<IViewModel> _viewModels;
 
+        #endregion
+
+        #region Constructors
+
         private FlowManager()
         {
             ViewModels = new List<IViewModel>();
         }
+
+        #endregion
+
+        #region Public Methods
 
         public void ChangePage<TViewModel>() where TViewModel : IViewModel, new()
         {
@@ -42,6 +52,10 @@ namespace BasicWPF.MVVM
             }
         }
 
+        #endregion
+
+        #region Properties
+
         public static FlowManager Instance
         {
             get
@@ -55,8 +69,30 @@ namespace BasicWPF.MVVM
             }
         }
 
-        public IMainWindow AppWindow { get; set; }
+        public IMainWindow AppWindow
+        {
+            get { return _mainWindow; }
+            set
+            {
+                if (_mainWindow != value)
+                {
+                    _mainWindow = value;
+                }
+            }
+        }
 
-        public ICollection<IViewModel> ViewModels { get; private set; }
+        public ICollection<IViewModel> ViewModels
+        {
+            get { return _viewModels; }
+            private set
+            {
+                if (_viewModels != value)
+                {
+                    _viewModels = value;
+                }
+            }
+        }
+
+        #endregion
     }
 }

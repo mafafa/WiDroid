@@ -10,14 +10,24 @@ namespace BasicWPF.MVVM
 {
     public class MainViewModel : IViewModel
     {
+        #region Fields
+
         private IViewModel _currentViewModel;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
+
+        #region Constructors
 
         public MainViewModel()
         {
 
         }
+
+        #endregion
+
+        #region Protected Methods
 
         protected void RaisePropertyChanged([CallerMemberName]string propertName = "")
         {
@@ -27,6 +37,10 @@ namespace BasicWPF.MVVM
                 temp(this, new PropertyChangedEventArgs(propertName));
             }
         }
+
+        #endregion
+
+        #region Properties
 
         public IViewModel CurrentViewModel
         {
@@ -40,5 +54,7 @@ namespace BasicWPF.MVVM
                 }
             }
         }
+
+        #endregion
     }
 }
