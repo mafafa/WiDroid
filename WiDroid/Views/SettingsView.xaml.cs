@@ -13,16 +13,27 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using BasicWPF.MVVM;
+using WiDroid.ViewModels;
+
 namespace WiDroid.Views
 {
     /// <summary>
     /// Interaction logic for SettingsView.xaml
     /// </summary>
-    public partial class SettingsView : UserControl
+    public partial class SettingsView : UserControl, IView<SettingsViewModel>
     {
+        private SettingsViewModel _settingViewModel; 
+
         public SettingsView()
         {
             InitializeComponent();
+        }
+
+        public SettingsViewModel ViewModel
+        {
+            get { return _settingViewModel; }
+            set { _settingViewModel = value; }
         }
     }
 }
