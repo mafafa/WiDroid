@@ -13,22 +13,23 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 using BasicWPF.MVVM;
+using WiDroid.ViewModels;
 
 namespace WiDroid.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IView<MainViewModel>, IMainWindow
+    public partial class MainWindow : Window, IMainWindow
     {
-        private MainViewModel _mainViewModel;
+        private IMainViewModel _mainViewModel;
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        public MainViewModel ViewModel
+        public IMainViewModel ViewModel
         {
             get { return _mainViewModel; }
             set { _mainViewModel = value; }

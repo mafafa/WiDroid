@@ -5,10 +5,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
-namespace BasicWPF.MVVM
+using BasicWPF;
+using BasicWPF.MVVM;
+
+namespace WiDroid.ViewModels
 {
-    public class MainViewModel : IViewModel
+    public class MainViewModel : IMainViewModel
     {
         #region Fields
 
@@ -38,6 +42,11 @@ namespace BasicWPF.MVVM
             }
         }
 
+        private void NavigateToSettings(object param)
+        {
+            FlowManager.Instance.ChangePage<SettingsViewModel>();
+        }
+
         #endregion
 
         #region Properties
@@ -53,6 +62,11 @@ namespace BasicWPF.MVVM
                     RaisePropertyChanged();
                 }
             }
+        }
+
+        public ICommand NavigateToSettingsCommand
+        {
+            get { return new RelayCommand(NavigateToSettings); }
         }
 
         #endregion

@@ -9,6 +9,6 @@ namespace BasicWPF.MVVM
 {
     public interface IMainWindow
     {
-        MainViewModel ViewModel { get; set; }
+        IMainViewModel ViewModel { get; set; }
     }
 }

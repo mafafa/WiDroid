@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:WiDroid.Views"
+        xmlns:MVVM="clr-namespace:BasicWPF.MVVM;assembly=BasicWPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280">
     <Grid>
@@ -29,7 +30,7 @@
             <Button>Pictures</Button>
             <Button>Videos</Button>
             <Button>Files</Button>
-            <Button>Settings</Button>
+            <Button Command="{Binding NavigateToSettingsCommand}">Settings</Button>
         </UniformGrid>
 
         <DockPanel Grid.Row="0" Grid.Column="1">
@@ -43,25 +44,6 @@
 
         <Separator Grid.Row="1" Grid.ColumnSpan="2"/>
 
-        <ContentControl Grid.Row="2" Grid.ColumnSpan="2" Content="{Binding CurrentViewModel}" />
-
-        <!--<Grid.ColumnDefinitions>
-            <ColumnDefinition Width="15*"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="85*"/>
-        </Grid.ColumnDefinitions>
-
-        <StackPanel Grid.Column="0">
-            <Button>Music</Button>-->
-            <!--<Button Command="{Binding ChangeToQuickLookCommand}">QuickLook Request</Button>-->
-            <!--<Button>Pictures</Button>
-            <Button>Videos</Button>
-            <Button>Files</Button>
-            <Button>Settings</Button>
-        </StackPanel>
-
-        <Separator Grid.Column="1" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-
-        <ContentControl Grid.Column="2" Content="{Binding CurrentViewModel}" />-->
+        <ContentControl Grid.Row="2" Grid.ColumnSpan="2" Content="{Binding Path=(MVVM:IMainViewModel.CurrentViewModel)}" />
     </Grid>
 </Window>

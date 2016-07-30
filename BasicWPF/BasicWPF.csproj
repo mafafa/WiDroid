@@ -46,10 +46,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MVVM\FlowManager.cs" />
+    <Compile Include="MVVM\IMainViewModel.cs" />
     <Compile Include="MVVM\IMainWindow.cs" />
     <Compile Include="MVVM\IView.cs" />
     <Compile Include="MVVM\IViewModel.cs" />
-    <Compile Include="MVVM\MainViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RelayCommand.cs" />
   </ItemGroup>

@@ -8,6 +8,7 @@ using System.Windows;
 
 using BasicWPF.MVVM;
 using WiDroid.Views;
+using WiDroid.ViewModels;
 
 namespace WiDroid
 {
