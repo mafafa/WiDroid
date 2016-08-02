@@ -24,9 +24,8 @@
                     <Setter Property="Margin" Value="10,0,10,0"/>
                 </Style>
             </UniformGrid.Resources>
-            
+
             <Button>Music</Button>
-            <!--<Button Command="{Binding ChangeToQuickLookCommand}">QuickLook Request</Button>-->
             <Button>Pictures</Button>
             <Button>Videos</Button>
             <Button>Files</Button>
