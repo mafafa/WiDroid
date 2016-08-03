@@ -1,37 +1,49 @@
 ﻿module TCPListenerServer
 
+open System.Collections.Generic
 open System.Net
 open System.Net.Sockets
-
-open FileSyncHandlerMessageQueue
+open System.Threading.Tasks
 
 
 type TCPListenerServer(discoveryPort:int) =
     let server = new TcpListener (IPAddress.Loopback, discoveryPort)
 
-    let doSyncEvent = new Event<(IPAddress*int)[]>()
+    let activeConnections = new List<TcpClient>()
     
     let serverLoop () =
-        let rec loop () = async {
-            let client = server.AcceptTcpClient ()
+        let rec loop (pendingConnection:Task<TcpClient>) = async {            
+            let newPendingConnection, client =
+                match pendingConnection.Status with
+                | TaskStatus.Created | TaskStatus.WaitingForActivation | TaskStatus.WaitingToRun | TaskStatus.Running  ->
+                    (None, None)
+                | TaskStatus.Faulted | TaskStatus.Canceled ->
+                    raise (new System.NotImplementedException())
+                | TaskStatus.RanToCompletion ->
+                    let connectionTask = server.AcceptTcpClientAsync ()
+                    connectionTask.Start ()
+                    (Some connectionTask, Some pendingConnection.Result)
+                | _ -> 
+                    raise (new System.NotImplementedException())
+            
+            // Add the new client to the list
+            Option.iter (fun c -> activeConnections.Add c) client
 
-            // Create queue to manage file sync with that client
-            let ipEndPoint = client.Client.RemoteEndPoint :?> IPEndPoint
-            let queue = new FileSyncHandlerMessageQueue(client, ipEndPoint.Address, ipEndPoint.Port)
-            queue.Start ()
+            // Switch the new pending connection if there is one
+            let connectionAttempt = defaultArg newPendingConnection pendingConnection
 
-            return! loop ()
+            return! loop connectionAttempt
         }
 
         try
             server.Start ()
-            loop ()
+            
+            let connectionTask = server.AcceptTcpClientAsync ()
+            connectionTask.Start ()
+            
+            loop connectionTask
         finally
             server.Stop ()
-
-    let onSyncTrigger = doSyncEvent.Publish
-
-    do onSyncTrigger.Add (fun errorMessage -> ()) //TODO: Log errors/exceptions for the messageLoop
 
     member x.Start () =
         serverLoop ()
@@ -39,5 +51,5 @@ type TCPListenerServer(discoveryPort:int) =
     member x.Stop () =
         server.Stop ()
 
-    member x.TriggerSync (remoteClient:(IPAddress*int)[]) =
-        doSyncEvent.Trigger remoteClient
+    member x.ActiveConnections =
+        activeConnections

@@ -45,7 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Types.fs" />
     <Compile Include="FileSyncHandlerMessageQueue.fs" />
     <Compile Include="TCPListenerServer.fs" />
   </ItemGroup>

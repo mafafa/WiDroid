@@ -3,10 +3,22 @@
 open System.Net
 open System.Net.Sockets
 
-open Types
+
+    module Communication =
+        // Reply coming from the FileSyncMessageQueue
+        type FileSyncQueueReply =
+        | Error of string
+        | FinishedSuccessfully
+
+        // Message going to the FileSyncMessageQueue
+        type FileSyncQueueMessage =
+        | StartSync of string[]
+        | Stop
+
+open Communication
 
 
-type FileSyncMessageAndReplyChannel = FileSyncMessage*AsyncReplyChannel<FileSyncReply>
+type FileSyncMessageAndReplyChannel = FileSyncQueueMessage*AsyncReplyChannel<FileSyncQueueReply>
 
 type FileSyncHandlerMessageQueue (client:TcpClient, remoteIP:IPAddress, port:int) =
     let errorEvent = new Event<string>()
@@ -35,6 +47,7 @@ type FileSyncHandlerMessageQueue (client:TcpClient, remoteIP:IPAddress, port:int
                 try
                     try
                         Array.iter (fun filePath -> client.Client.SendFile(filePath)) filesToSync
+                        replyChannel.Reply FinishedSuccessfully
                     with
                     | :? SocketException ->
                         raise (System.NotImplementedException("This exception handling is not yet implemented"))
