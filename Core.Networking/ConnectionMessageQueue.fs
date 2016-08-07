@@ -1,4 +1,4 @@
-﻿module FileSyncHandlerMessageQueue
+﻿module ConnectionMessageQueue
 
 open System.Net
 open System.Net.Sockets
@@ -6,21 +6,21 @@ open System.Net.Sockets
 
     module Communication =
         // Reply coming from the FileSyncMessageQueue
-        type FileSyncQueueReply =
+        type ConnectionQueueReply =
         | Error of string
         | FinishedSuccessfully
 
         // Message going to the FileSyncMessageQueue
-        type FileSyncQueueMessage =
+        type ConnectionQueueMessage =
         | StartSync of string[]
         | Stop
 
 open Communication
 
 
-type FileSyncMessageAndReplyChannel = FileSyncQueueMessage*AsyncReplyChannel<FileSyncQueueReply>
+type FileSyncMessageAndReplyChannel = ConnectionQueueMessage*AsyncReplyChannel<ConnectionQueueReply>
 
-type FileSyncHandlerMessageQueue (client:TcpClient, remoteIP:IPAddress, port:int) =
+type ConnectionMessageQueue (client:TcpClient, remoteIP:IPAddress, port:int) =
     let errorEvent = new Event<string>()
 
     let fileSyncAgent = new MailboxProcessor<FileSyncMessageAndReplyChannel>(fun inbox ->

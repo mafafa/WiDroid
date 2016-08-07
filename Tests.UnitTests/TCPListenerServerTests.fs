@@ -1,6 +1,7 @@
 ﻿module TCPListenerServerTests
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
+open System
 open System.Net
 open System.Net.Sockets
 
@@ -13,7 +14,7 @@ type TCPListenerServerTests () =
 
     let cleanupTest (serverUsed:TCPListenerServer) (client:TcpClient list option) =
         serverUsed.Stop ()
-        Option.iter (fun clientList -> List.iter (fun (c:TcpClient) -> c.Close ()) clientList) client
+        Option.iter (fun clientList -> List.iter (fun (c:TcpClient) -> c.GetStream().Close (); c.Close ()) clientList) client
 
     let createClientAndConnect (port:int) =
         let client = new TcpClient()
@@ -22,6 +23,7 @@ type TCPListenerServerTests () =
     
     [<TestMethod>]
     [<TestCategory(Networking)>]
+    [<TestCategory(TCPListenerServerTest)>]
     member x.``Start Server`` () =
         let server = new TCPListenerServer(44000)
         server.Start ()
@@ -31,6 +33,7 @@ type TCPListenerServerTests () =
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
+    [<TestCategory(TCPListenerServerTest)>]
     member x.``Start Server, then Start Again`` () =
         let server = new TCPListenerServer(44000)
         server.Start ()
@@ -43,6 +46,7 @@ type TCPListenerServerTests () =
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
+    [<TestCategory(TCPListenerServerTest)>]
     member x.``Start, then Stop Server`` () =
         let server = new TCPListenerServer(44000)
         server.Start ()
@@ -52,6 +56,7 @@ type TCPListenerServerTests () =
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
+    [<TestCategory(TCPListenerServerTest)>]
     member x.``Start Server, Stop, then Stop Again`` () =
         let server = new TCPListenerServer(44000)
         server.Start ()
@@ -62,12 +67,14 @@ type TCPListenerServerTests () =
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
+    [<TestCategory(TCPListenerServerTest)>]
     member x.``Stop Server Without Starting`` () =
         let server = new TCPListenerServer(44000)
         server.Stop ()
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
+    [<TestCategory(TCPListenerServerTest)>]
     member x.``Start Server, then Stop, then Start Again`` () =
         let server = new TCPListenerServer(44000)
         server.Start ()
@@ -82,6 +89,7 @@ type TCPListenerServerTests () =
         
     [<TestMethod>]
     [<TestCategory(Networking)>]
+    [<TestCategory(TCPListenerServerTest)>]
     member x.``Start Server, Client Connects`` () =
         let server = new TCPListenerServer(44000)
         server.Start ()
@@ -93,6 +101,7 @@ type TCPListenerServerTests () =
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
+    [<TestCategory(TCPListenerServerTest)>]
     member x.``Start Server, Two Client Connects, Check Active Connections`` () =
         let server = new TCPListenerServer(44000)
         server.Start ()
@@ -108,7 +117,8 @@ type TCPListenerServerTests () =
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
-    member x.``Start Server, Client Connects, then Disconnects`` () =
+    [<TestCategory(TCPListenerServerTest)>]
+    member x.``Start Server, Client Connects, then Closes Connection`` () =
         let server = new TCPListenerServer(44000)
         server.Start ()
         
@@ -116,11 +126,36 @@ type TCPListenerServerTests () =
 
         Async.Sleep 5000 |> Async.RunSynchronously
         
-        client.GetStream().Close()
-        client.Close()
+        client.GetStream().Close ()
+        client.Close ()
 
         Async.Sleep 5000 |> Async.RunSynchronously
 
         Assert.IsTrue(server.ActiveConnections.Count = 0, "There are still connections in the server's active connections list.")
+
+        // Client resources have already been disposed
+        cleanupTest server (None)
+
+    [<TestMethod>]
+    [<TestCategory(Networking)>]
+    [<TestCategory(TCPListenerServerTest)>]
+    member x.``Start Server, Client Connects, Stays Connected for Two Minutes`` () =
+        let rec testLoop (server:TCPListenerServer) timeout =
+            match DateTime.UtcNow > timeout with
+            | true ->
+                ()
+            | false ->
+                Assert.IsTrue(server.ActiveConnections.Count = 1, sprintf "Connection was lost after %O" (DateTime.UtcNow - timeout))
+                testLoop server timeout
+
+        let server = new TCPListenerServer(44000)
+        server.Start ()
+        
+        let client = createClientAndConnect 44000
+        
+        Async.Sleep 5000 |> Async.RunSynchronously
+
+        let timeout = DateTime.UtcNow.AddMinutes 2.0
+        testLoop server timeout
 
         cleanupTest server (Some [client])
