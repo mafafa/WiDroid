@@ -105,3 +105,22 @@ type TCPListenerServerTests () =
         Assert.IsTrue(server.ActiveConnections.Count = 2, "There is not 2 connections in the server's active connections list.")
 
         cleanupTest server (Some [client1; client2])
+
+    [<TestMethod>]
+    [<TestCategory(Networking)>]
+    member x.``Start Server, Client Connects, then Disconnects`` () =
+        let server = new TCPListenerServer(44000)
+        server.Start ()
+        
+        let client = createClientAndConnect 44000
+
+        Async.Sleep 5000 |> Async.RunSynchronously
+        
+        client.GetStream().Close()
+        client.Close()
+
+        Async.Sleep 5000 |> Async.RunSynchronously
+
+        Assert.IsTrue(server.ActiveConnections.Count = 0, "There are still connections in the server's active connections list.")
+
+        cleanupTest server (Some [client])

@@ -2,6 +2,7 @@
 
 open System.Collections.Generic
 open System.Net
+open System.Net.NetworkInformation
 open System.Net.Sockets
 open System.Threading
 open System.Threading.Tasks
@@ -12,6 +13,23 @@ type TCPListenerServer(discoveryPort:int) =
 
     let activeConnections = new List<TcpClient>()
     let cancellationToken = new CancellationTokenSource()
+
+    let connectionIsStillActive (client:TcpClient) =
+        let ipProperties = IPGlobalProperties.GetIPGlobalProperties ()
+        let allTcpConnections = ipProperties.GetActiveTcpConnections ()
+        let relevantTcpConnections = Array.filter (fun (connectionInfo:TcpConnectionInformation) -> 
+            (connectionInfo.LocalEndPoint = (client.Client.LocalEndPoint :?> IPEndPoint)) && (connectionInfo.RemoteEndPoint = (client.Client.RemoteEndPoint :?> IPEndPoint))) allTcpConnections
+        
+        try
+            let stateOfConnection = (Array.get relevantTcpConnections 0).State
+            match stateOfConnection with
+            | TcpState.Established ->
+                true
+            | _ ->
+                false
+        with
+        | :? System.IndexOutOfRangeException as ex ->
+            false
     
     let rec loop (pendingConnection:Task<TcpClient>) = async {            
         let newPendingConnection, client =
@@ -36,15 +54,17 @@ type TCPListenerServer(discoveryPort:int) =
         // Switch the new pending connection if there is one
         let connectionAttempt = defaultArg newPendingConnection pendingConnection
 
-        // Check that the connections are still alive
-        Seq.iter (fun (connection:TcpClient) -> if not connection.Connected then activeConnections.Remove connection |> ignore) activeConnections
+        // Remove inactive/dropped connections
+        activeConnections.RemoveAll (fun connection -> not (connectionIsStillActive connection)) |> ignore
 
-        Async.Sleep 1000 |> Async.RunSynchronously
-
+        // Could be useful to keep if we ever need to do something when the task is canceled
         //match cancellationToken.IsCancellationRequested with
         //| true ->
         //    ()
         //| false ->
+
+
+        Async.Sleep 1000 |> Async.RunSynchronously
         return! loop connectionAttempt
     }
 
