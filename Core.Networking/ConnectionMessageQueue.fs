@@ -1,5 +1,6 @@
 ﻿module ConnectionMessageQueue
 
+open System
 open System.Net
 open System.Net.Sockets
 
@@ -30,19 +31,23 @@ type ConnectionMessageQueue (client:TcpClient, remoteIP:IPAddress, port:int) =
                 if not client.Connected
                 then
                     client.Connect(remoteIP, port)
-            with ex ->
-                // Is it necessary to change the socket??
+            with
+            | :? SocketException as ex ->
+                Async.Sleep 5000 |> Async.RunSynchronously
+                return! messageLoop client
+            | :? ObjectDisposedException as ex ->
                 let newSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
                 newSocket.ReceiveTimeout <- 5000
                 client.Client <- newSocket
-                do! Async.Sleep(1000)
+                Async.Sleep 2000 |> Async.RunSynchronously
                 return! messageLoop client
             
             let! message, replyChannel = inbox.Receive ()
             match message with
             | Stop ->
+                client.GetStream().Close ()
                 client.Close ()
-                client.Dispose ()
+                replyChannel.Reply FinishedSuccessfully
             | StartSync filesToSync ->
                 try
                     try
@@ -54,8 +59,8 @@ type ConnectionMessageQueue (client:TcpClient, remoteIP:IPAddress, port:int) =
                     | :? System.IO.FileNotFoundException ->
                         raise (System.NotImplementedException("This exception handling is not yet implemented"))
                 finally
+                    client.GetStream().Close ()
                     client.Close ()
-                    client.Dispose ()
         }
 
         messageLoop client

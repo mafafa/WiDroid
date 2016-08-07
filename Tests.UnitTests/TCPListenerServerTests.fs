@@ -16,7 +16,7 @@ type TCPListenerServerTests () =
         serverUsed.Stop ()
         Option.iter (fun clientList -> List.iter (fun (c:TcpClient) -> c.GetStream().Close (); c.Close ()) clientList) client
 
-    let createClientAndConnect (port:int) =
+    let createClientAndConnect port =
         let client = new TcpClient()
         client.Connect(IPAddress.Loopback, port)
         client
