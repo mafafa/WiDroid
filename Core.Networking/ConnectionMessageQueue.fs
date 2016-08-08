@@ -6,9 +6,14 @@ open System.Net.Sockets
 
 
     module Communication =
+        type ConnectionMessageQueueError = {
+            Exception : Exception
+            Message : string
+        }
+        
         // Reply coming from the FileSyncMessageQueue
         type ConnectionQueueReply =
-        | Error of string
+        | Error of ConnectionMessageQueueError
         | FinishedSuccessfully
 
         // Message going to the FileSyncMessageQueue
@@ -18,11 +23,10 @@ open System.Net.Sockets
 
 open Communication
 
-
-type FileSyncMessageAndReplyChannel = ConnectionQueueMessage*AsyncReplyChannel<ConnectionQueueReply>
+type FileSyncMessageAndReplyChannel = ConnectionQueueMessage * AsyncReplyChannel<ConnectionQueueReply>
 
 type ConnectionMessageQueue (client:TcpClient, remoteIP:IPAddress, port:int) =
-    let errorEvent = new Event<string>()
+    let errorEvent = new Event<ConnectionMessageQueueError>()
 
     let fileSyncAgent = new MailboxProcessor<FileSyncMessageAndReplyChannel>(fun inbox ->
         let rec messageLoop (client:TcpClient) = async {
@@ -45,22 +49,28 @@ type ConnectionMessageQueue (client:TcpClient, remoteIP:IPAddress, port:int) =
             let! message, replyChannel = inbox.Receive ()
             match message with
             | Stop ->
-                client.GetStream().Close ()
-                client.Close ()
-                replyChannel.Reply FinishedSuccessfully
-            | StartSync filesToSync ->
                 try
-                    try
-                        Array.iter (fun filePath -> client.Client.SendFile(filePath)) filesToSync
-                        replyChannel.Reply FinishedSuccessfully
-                    with
-                    | :? SocketException ->
-                        raise (System.NotImplementedException("This exception handling is not yet implemented"))
-                    | :? System.IO.FileNotFoundException ->
-                        raise (System.NotImplementedException("This exception handling is not yet implemented"))
-                finally
                     client.GetStream().Close ()
                     client.Close ()
+                    replyChannel.Reply FinishedSuccessfully
+                with
+                | :? ObjectDisposedException as ex ->
+                    replyChannel.Reply FinishedSuccessfully
+                | ex ->
+                    replyChannel.Reply (Error { Exception = ex; Message = ex.Message })
+                
+                return ()
+            | StartSync filesToSync ->
+                try
+                    Array.iter (fun filePath -> client.Client.SendFile(filePath)) filesToSync
+                    replyChannel.Reply FinishedSuccessfully
+                with
+                | :? SocketException as ex ->
+                    raise (System.NotImplementedException("This exception handling is not yet implemented"))
+                | :? System.IO.FileNotFoundException as ex ->
+                    replyChannel.Reply (Error { Exception = ex; Message = ex.Message })
+
+                return! messageLoop client
         }
 
         messageLoop client
@@ -68,7 +78,7 @@ type ConnectionMessageQueue (client:TcpClient, remoteIP:IPAddress, port:int) =
 
     let onError = errorEvent.Publish
 
-    do onError.Add (fun errorMessage -> ()) //TODO: Log errors/exceptions for the messageLoop
+    do onError.Add (fun message -> ()) //TODO: Log errors/exceptions for the messageLoop
 
     member x.Start () = 
         fileSyncAgent.Start ()
