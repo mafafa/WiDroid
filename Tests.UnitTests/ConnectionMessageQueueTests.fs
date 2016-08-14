@@ -1,5 +1,6 @@
 ﻿module ConnectionMessageQueueTests
 
+open Microsoft.FSharp.Data.UnitSystems.SI.UnitNames
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System
 open System.Collections.Generic
@@ -8,10 +9,12 @@ open System.Net
 open System.Net.Sockets
 open System.Text
 
-open TestCategories
-open TestBase
+open NetworkingCommon
 open ConnectionMessageQueue
 open ConnectionMessageQueue.Communication
+open TestBase
+open TestCommon
+open TestCommon.TestCategories
 
 
 [<TestClass>]
@@ -29,6 +32,7 @@ type ConnectionMessageQueueTests () as x =
         let client = new TcpClient()
         client.Connect(IPAddress.Loopback, port)
         x.CleanupActions.Add ((fun () -> client.GetStream().Close (); client.Close ()), "Disposing of client resources")
+        client.ReceiveTimeout <- 2000
         printfn "Created a client"
         client
 
@@ -44,32 +48,22 @@ type ConnectionMessageQueueTests () as x =
         printfn "Created a message queue"
         messageQueue
 
-    (*let createFileForTest path (content:string) =
+    let createFileForTest path (content:string) =
         try
             let fileStream = File.Create path
             let contentBytes = Encoding.ASCII.GetBytes content
             fileStream.Write(contentBytes, 0, contentBytes.Length)
             fileStream.Dispose ()
-            x.CleanupActions.Add ((fun () -> File.Delete path), (sprintf "Deleting File: %s" path))
+            x.CleanupActions.Add ((fun () -> 
+                match File.Exists path with
+                | true ->
+                    File.Delete path
+                | false ->
+                    raise (new IOException(sprintf "File %s does not exist, couldn't delete it!!!" path))), (sprintf "Deleting File: %s" path))
             contentBytes
         with ex ->
             Assert.Fail (sprintf "Was not able to create file: %s" path)
             [||]
-
-    let readStreamToFile (stream:NetworkStream) outputPath =
-        let rec readStreamToFileLoop (fileStream:FileStream) buffer =
-            let bytesRead = stream.Read(buffer, 0, buffer.Length)
-            match bytesRead > 0 with
-            | true ->
-                fileStream.Write(buffer, 0, bytesRead)
-                readStreamToFileLoop fileStream buffer
-            | false ->
-                ()
-        
-        let buffer = Array.zeroCreate 1024
-        let fileStream = File.Open(outputPath, FileMode.Create)
-        readStreamToFileLoop fileStream buffer
-        fileStream.Close ()*)
     
 
     [<TestMethod>]
@@ -207,19 +201,17 @@ type ConnectionMessageQueueTests () as x =
     member x.``Start Message Queue, Close Client Socket Connection, then Stop`` () =
         ()*)
 
-    (*[<TestMethod>]
+    [<TestMethod>]
     [<TestCategory(Networking)>]
     [<TestCategory(ConnectionMessageQueueTest)>]
     member x.``Start Message Queue, Start Sync Message, then Stop`` () =
         let server = createServerAndStart 44000
-        let queueClient = createClientAndConnect 44000
-        let client = createClientAndConnect 44000
-
-        let messageQueue = createMessageQueueAndStart client 44000
-
-        let receivingClient = server.AcceptTcpClient ()
-        x.CleanupActions.Add 
         
+        let androidClient = createClientAndConnect 44000
+        let computerClient = server.AcceptTcpClient ()
+
+        let messageQueue = createMessageQueueAndStart computerClient 44000
+
         let filePath = @"testFile.txt"
         let contentBytes = createFileForTest filePath "This is a test file. Please do not mooh in it!"
 
@@ -229,12 +221,12 @@ type ConnectionMessageQueueTests () as x =
             | Error errorInfo ->
                 Assert.Fail (sprintf "There was an error sending file: %s" filePath)
             | _ ->
-                let _ = createFileForTest @"receivedTestFile.txt" ""
-                readStreamToFile (receivingClient.GetStream()) @"receivedTestFile.txt"
+                let _ = createFileForTest "receivedTestFile.txt" ""
+                readStreamToFile (androidClient.GetStream()) "receivedTestFile.txt"
                 
                 let contentReceived = File.ReadAllBytes @"receivedTestFile.txt"
                 Assert.IsTrue((contentReceived.Length = contentBytes.Length), sprintf "Did not receive all bytes for file: %s" filePath)
-                Assert.AreEqual(contentBytes, contentReceived, sprintf "Did not receive same message. Message sent: %A ----- Message received: %A" contentBytes contentReceived)
+                arrayItemsAreEqual contentBytes contentReceived
         with
         | :? TimeoutException as ex ->
             Assert.Fail (sprintf "Attempt to send file: %s timed out." filePath)
@@ -248,7 +240,7 @@ type ConnectionMessageQueueTests () as x =
                 x.CleanupActions.RemoveAt (x.CleanupActions.Count - 3)
         with
         | :? TimeoutException as ex ->
-            Assert.Fail "Attempt to stop the server failed because of timeout" *)
+            Assert.Fail "Attempt to stop the server failed because of timeout"
 
     (*[<TestMethod>]
     [<TestCategory(Networking)>]

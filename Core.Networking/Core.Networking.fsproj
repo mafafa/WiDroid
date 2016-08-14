@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="NetworkingCommon.fs" />
     <Compile Include="ConnectionMessageQueue.fs" />
     <Compile Include="TCPListenerServer.fs" />
   </ItemGroup>

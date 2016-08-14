@@ -52,8 +52,8 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="TestCategories.fs" />
     <Compile Include="TestBase.fs" />
+    <Compile Include="TestCommon.fs" />
     <Compile Include="TCPListenerServerTests.fs" />
     <Compile Include="ConnectionMessageQueueTests.fs" />
   </ItemGroup>

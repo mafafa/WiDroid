@@ -57,18 +57,15 @@ type ConnectionMessageQueue (client:TcpClient, remoteIP:IPAddress, port:int) =
                 | :? ObjectDisposedException as ex ->
                     replyChannel.Reply FinishedSuccessfully
                 | ex ->
-                    replyChannel.Reply (Error { Exception = ex; Message = ex.Message })
+                    replyChannel.Reply (Error { Exception = ex; Message = sprintf "Exception in stopping message queue with remote IP %A: %s" remoteIP ex.Message })
                 
                 return ()
             | StartSync filesToSync ->
                 try
                     Array.iter (fun filePath -> client.Client.SendFile(filePath)) filesToSync
                     replyChannel.Reply FinishedSuccessfully
-                with
-                | :? SocketException as ex ->
-                    raise (System.NotImplementedException("This exception handling is not yet implemented"))
-                | :? System.IO.FileNotFoundException as ex ->
-                    replyChannel.Reply (Error { Exception = ex; Message = ex.Message })
+                with ex ->
+                    replyChannel.Reply (Error { Exception = ex; Message = sprintf "Exception in sending file for sync to remote IP %A: %s" remoteIP ex.Message })
 
                 return! messageLoop client
         }

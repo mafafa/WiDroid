@@ -5,9 +5,9 @@ open System
 open System.Net
 open System.Net.Sockets
 
-open TestCategories
-open TestBase
 open TCPListenerServer
+open TestBase
+open TestCommon.TestCategories
 
 
 [<TestClass>]
