@@ -6,6 +6,11 @@ open System.Net
 open System.Net.NetworkInformation
 open System.Net.Sockets
 
+    
+    module ClientServerCommunication =
+        let [<Literal>] EOT = 04uy
+
+open ClientServerCommunication
 
 let connectionIsStillActive (client:TcpClient) =
     let ipProperties = IPGlobalProperties.GetIPGlobalProperties ()
@@ -26,27 +31,16 @@ let connectionIsStillActive (client:TcpClient) =
 
 let readStreamToFile (stream:NetworkStream) outputPath =
     let rec readStreamToFileLoop (fileStream:FileStream) buffer =
-        try
-            let bytesRead = stream.Read(buffer, 0, buffer.Length)
-            match bytesRead > 0 with
-            | true ->
-                fileStream.Write(buffer, 0, bytesRead)
-                readStreamToFileLoop fileStream buffer
-            | false ->
-                ()
-        with
-        | :? IOException as ex ->
-            let socketException =
-                match ex.InnerException with
-                | :? SocketException as scktEx ->
-                    scktEx
-                | _ ->  // The inner exception is not the expected socket exception, raise the original exception
-                    raise ex    
-            match socketException.ErrorCode with
-            | 10060 ->  // Timeout Exception, nothing more to read
-                ()
-            | _ ->  // Unexpected error code, raise the original exception    
-                raise ex      
+        let bytesRead = stream.Read(buffer, 0, buffer.Length)
+        match Array.contains EOT buffer with
+        | true ->
+            // Remove EOT byte and "extra space" of the array so that it doesn't write null bytes in the file
+            let bufferWithoutNullOrEOT = Array.filter ((<>) EOT) buffer |> Array.filter ((<>) 0uy)
+            fileStream.Write(bufferWithoutNullOrEOT, 0, bufferWithoutNullOrEOT.Length)
+            ()
+        | false ->
+            fileStream.Write(buffer, 0, bytesRead)
+            readStreamToFileLoop fileStream buffer  
         
     let buffer = Array.zeroCreate 1024
     let fileStream = File.Open(outputPath, FileMode.Create)

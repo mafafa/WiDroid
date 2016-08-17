@@ -32,7 +32,6 @@ type ConnectionMessageQueueTests () as x =
         let client = new TcpClient()
         client.Connect(IPAddress.Loopback, port)
         x.CleanupActions.Add ((fun () -> client.GetStream().Close (); client.Close ()), "Disposing of client resources")
-        client.ReceiveTimeout <- 2000
         printfn "Created a client"
         client
 
@@ -189,18 +188,6 @@ type ConnectionMessageQueueTests () as x =
 
         messageQueue.Start ()
 
-    (*[<TestMethod>]
-    [<TestCategory(Networking)>]
-    [<TestCategory(ConnectionMessageQueueTest)>]
-    member x.``Start Message Queue, Dispose Client, then Stop`` () =
-        ()
-
-    [<TestMethod>]
-    [<TestCategory(Networking)>]
-    [<TestCategory(ConnectionMessageQueueTest)>]
-    member x.``Start Message Queue, Close Client Socket Connection, then Stop`` () =
-        ()*)
-
     [<TestMethod>]
     [<TestCategory(Networking)>]
     [<TestCategory(ConnectionMessageQueueTest)>]
@@ -245,5 +232,43 @@ type ConnectionMessageQueueTests () as x =
     (*[<TestMethod>]
     [<TestCategory(Networking)>]
     [<TestCategory(ConnectionMessageQueueTest)>]
-    member x.``Start Message Queue, Start Sync Message, Files don't Exist`` () =
-        ()*)
+    member x.``Start Message Queue, Start Sync Message, File doesn't Exist in the Middle`` () =
+        let server = createServerAndStart 44000
+        
+        let androidClient = createClientAndConnect 44000
+        let computerClient = server.AcceptTcpClient ()
+
+        let messageQueue = createMessageQueueAndStart computerClient 44000
+
+        let filePath1 = @"testFile1.txt"
+        let contentBytes = createFileForTest filePath1 "This is a test file. Please do not mooh in it!"
+        let filePath2 = @"testFile2.txt"
+        let contentBytes = createFileForTest filePath2 "Omg, there is a second file!"
+        let fakeFilePath = @"testFileFake.txt"
+
+        try
+            let reply = messageQueue.PostAndReply (StartSync [|filePath1; fakeFilePath; filePath2|])
+            match reply with
+            | Error errorInfo ->
+                Assert.Fail (sprintf "There was an error sending files")
+            | _ ->
+                let _ = createFileForTest "receivedTestFile.txt" ""
+                readStreamToFile (androidClient.GetStream()) "receivedTestFile.txt"
+                
+                let contentReceived = File.ReadAllBytes @"receivedTestFile.txt"
+                Assert.IsTrue((contentReceived.Length = contentBytes.Length), sprintf "Did not receive all bytes for file: %s" filePath)
+                arrayItemsAreEqual contentBytes contentReceived
+        with
+        | :? TimeoutException as ex ->
+            Assert.Fail (sprintf "Attempt to send file: %s timed out." filePath)
+
+        try
+            let reply = messageQueue.Stop ()
+            match reply with
+            | Error errorInfo ->
+                Assert.Fail (sprintf "The message queue did not stop successfully: %s" errorInfo.Message)
+            | _ ->
+                x.CleanupActions.RemoveAt (x.CleanupActions.Count - 3)
+        with
+        | :? TimeoutException as ex ->
+            Assert.Fail "Attempt to stop the server failed because of timeout"*)
