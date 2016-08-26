@@ -5,10 +5,57 @@ open System.IO
 open System.Net
 open System.Net.NetworkInformation
 open System.Net.Sockets
+open System.Runtime.Serialization.Formatters.Binary
+open System.Text
 
     
-    module ClientServerCommunication =
+    module ClientServerCommunication =       
         let [<Literal>] EOT = 04uy
+        
+        (*type FileTransferMessage = {
+            DestPath : string
+            FileContent: byte[]
+        }
+        type ACKMessage = {
+            TimeACK : DateTime
+        }
+        type ResendMessage = {
+            RetriesLeft : int
+        }*)
+
+        type MessageType =
+        | FileTransfer// of FileTransferMessage
+        | ACK// of ACKMessage
+        | Resend //of ResendMessage
+        type Message = {
+            Type : MessageType
+            Content : obj option
+        }
+
+        let sendFile (client:TcpClient) (srcFilePath:string) = 
+            let formatter = new BinaryFormatter()
+
+            // Deserialize message content to obj
+            let fileBytes = File.ReadAllBytes srcFilePath
+            let deserializedContent = fileBytes :> obj
+
+            // Create and serialize message into network stream
+            let message = { Type = FileTransfer; Content = Some deserializedContent }
+            formatter.Serialize (client.GetStream (), message)
+
+        let sendAck (client:TcpClient) =
+            let formatter = new BinaryFormatter()
+
+            // Create and serialize message into network stream
+            let message = { Type = ACK; Content = None }
+            formatter.Serialize (client.GetStream(), message)
+
+        let sendResend (client:TcpClient) =
+            let formatter = new BinaryFormatter()
+
+            // Create and serialize message into network stream
+            let message = { Type = Resend; Content = None }
+            formatter.Serialize (client.GetStream(), message)
 
 open ClientServerCommunication
 
@@ -29,22 +76,25 @@ let connectionIsStillActive (client:TcpClient) =
     | :? System.IndexOutOfRangeException as ex ->
         false
 
-let readStreamToFile (stream:NetworkStream) outputPath =
-    let rec readStreamToFileLoop (fileStream:FileStream) buffer =
-        let bytesRead = stream.Read(buffer, 0, buffer.Length)
-        match Array.contains EOT buffer with
-        | true ->
-            // Remove EOT byte and "extra space" of the array so that it doesn't write null bytes in the file
-            let bufferWithoutNullOrEOT = Array.filter ((<>) EOT) buffer |> Array.filter ((<>) 0uy)
-            fileStream.Write(bufferWithoutNullOrEOT, 0, bufferWithoutNullOrEOT.Length)
-            ()
-        | false ->
-            fileStream.Write(buffer, 0, bytesRead)
-            readStreamToFileLoop fileStream buffer  
-        
-    let buffer = Array.zeroCreate 1024
-    let fileStream = File.Open(outputPath, FileMode.Create)
+let readStreamToFile (client:TcpClient) outputPath =
+    let formatter = new BinaryFormatter()
+
     try
-        readStreamToFileLoop fileStream buffer
-    finally
-        fileStream.Close ()
+        let message = (formatter.Deserialize (client.GetStream ())) :?> Message
+        match message.Type with
+        | FileTransfer ->
+            match message.Content with
+            | Some content ->
+                let bytesContent = 
+                    use mStream = new MemoryStream()
+                    formatter.Serialize (mStream, content)
+                    mStream.ToArray ()
+
+                File.WriteAllBytes (outputPath, bytesContent)
+            | None ->
+                failwith "There was no content in the FileSync message!!!"
+        | _ ->
+            ()
+    with
+    | :? InvalidCastException as ex ->
+        failwith "Message format unknown!!!"

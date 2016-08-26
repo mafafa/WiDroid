@@ -209,9 +209,9 @@ type ConnectionMessageQueueTests () as x =
                 Assert.Fail (sprintf "There was an error sending file: %s" filePath)
             | _ ->
                 let _ = createFileForTest "receivedTestFile.txt" ""
-                readStreamToFile (androidClient.GetStream()) "receivedTestFile.txt"
+                readStreamToFile androidClient "receivedTestFile.txt"
                 
-                let contentReceived = File.ReadAllBytes @"receivedTestFile.txt"
+                let contentReceived = File.ReadAllBytes "receivedTestFile.txt"
                 Assert.IsTrue((contentReceived.Length = contentBytes.Length), sprintf "Did not receive all bytes for file: %s" filePath)
                 arrayItemsAreEqual contentBytes contentReceived
         with

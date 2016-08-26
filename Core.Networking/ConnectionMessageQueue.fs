@@ -64,10 +64,12 @@ type ConnectionMessageQueue (client:TcpClient, remoteIP:IPAddress, port:int) =
                 return ()
             | StartSync filesToSync ->
                 try
-                    Array.iter (fun filePath -> 
+                    (*Array.iter (fun filePath -> 
                         client.Client.SendFile(filePath)
                         client.Client.Send([|EOT|]) |> ignore
-                        ) filesToSync
+                        ) filesToSync*)
+
+                    Array.iter (sendFile client) filesToSync
                     replyChannel.Reply FinishedSuccessfully
                 with ex ->
                     replyChannel.Reply (Error { Exception = ex; Message = sprintf "Exception in sending file for sync to remote IP %A: %s" remoteIP ex.Message })
