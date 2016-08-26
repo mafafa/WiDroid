@@ -6,7 +6,7 @@ open System.Collections.Generic
 
     module TestCategories =
         let [<Literal>] Networking = "Networking"
-        let [<Literal>] TCPListenerServerTest = "TCPListenerServerTest"
+        let [<Literal>] ClientDiscoveryServerTest = "ClientDiscoveryServerTest"
         let [<Literal>] ConnectionMessageQueueTest = "ConnectionMessageQueueTest"
 
     

@@ -54,7 +54,7 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="TestBase.fs" />
     <Compile Include="TestCommon.fs" />
-    <Compile Include="TCPListenerServerTests.fs" />
+    <Compile Include="ClientDiscoveryServerTests.fs" />
     <Compile Include="ConnectionMessageQueueTests.fs" />
   </ItemGroup>
   <ItemGroup>

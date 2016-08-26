@@ -45,9 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Protocol.fs" />
     <Compile Include="NetworkingCommon.fs" />
     <Compile Include="ConnectionMessageQueue.fs" />
-    <Compile Include="TCPListenerServer.fs" />
+    <Compile Include="ClientDiscoveryServer.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

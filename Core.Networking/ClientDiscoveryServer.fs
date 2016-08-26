@@ -1,4 +1,4 @@
-﻿module TCPListenerServer
+﻿module ClientDiscoveryServer
 
 open System.Collections.Generic
 open System.Net

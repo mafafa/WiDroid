@@ -1,17 +1,17 @@
-﻿module TCPListenerServerTests
+﻿module ClientDiscoveryServerTests
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System
 open System.Net
 open System.Net.Sockets
 
-open TCPListenerServer
+open ClientDiscoveryServer
 open TestBase
 open TestCommon.TestCategories
 
 
 [<TestClass>]
-type TCPListenerServerTests () as x =
+type ClientDiscoveryServerTests () as x =
     inherit TestBase ()
 
     let createClientAndConnect port =
@@ -29,14 +29,14 @@ type TCPListenerServerTests () as x =
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
-    [<TestCategory(TCPListenerServerTest)>]
+    [<TestCategory(ClientDiscoveryServerTest)>]
     member x.``Start Server`` () =
         let server = createServerAndStart 44000
         Async.Sleep 5000 |> Async.RunSynchronously
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
-    [<TestCategory(TCPListenerServerTest)>]
+    [<TestCategory(ClientDiscoveryServerTest)>]
     member x.``Start Server, then Start Again`` () =
         let server = createServerAndStart 44000
         Async.Sleep 5000 |> Async.RunSynchronously
@@ -46,7 +46,7 @@ type TCPListenerServerTests () as x =
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
-    [<TestCategory(TCPListenerServerTest)>]
+    [<TestCategory(ClientDiscoveryServerTest)>]
     member x.``Start, then Stop Server`` () =
         let server = createServerAndStart 44000
         Async.Sleep 5000 |> Async.RunSynchronously
@@ -55,7 +55,7 @@ type TCPListenerServerTests () as x =
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
-    [<TestCategory(TCPListenerServerTest)>]
+    [<TestCategory(ClientDiscoveryServerTest)>]
     member x.``Start Server, Stop, then Stop Again`` () =
         let server = createServerAndStart 44000
         Async.Sleep 5000 |> Async.RunSynchronously
@@ -65,14 +65,14 @@ type TCPListenerServerTests () as x =
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
-    [<TestCategory(TCPListenerServerTest)>]
+    [<TestCategory(ClientDiscoveryServerTest)>]
     member x.``Stop Server Without Starting`` () =
         let server = new TCPListenerServer(44000)
         server.Stop ()
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
-    [<TestCategory(TCPListenerServerTest)>]
+    [<TestCategory(ClientDiscoveryServerTest)>]
     member x.``Start Server, then Stop, then Start Again`` () =
         let server = createServerAndStart 44000
         Async.Sleep 5000 |> Async.RunSynchronously
@@ -84,7 +84,7 @@ type TCPListenerServerTests () as x =
         
     [<TestMethod>]
     [<TestCategory(Networking)>]
-    [<TestCategory(TCPListenerServerTest)>]
+    [<TestCategory(ClientDiscoveryServerTest)>]
     member x.``Start Server, Client Connects`` () =
         let server = createServerAndStart 44000
         
@@ -93,7 +93,7 @@ type TCPListenerServerTests () as x =
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
-    [<TestCategory(TCPListenerServerTest)>]
+    [<TestCategory(ClientDiscoveryServerTest)>]
     member x.``Start Server, Two Client Connects, Check Active Connections`` () =
         let server = createServerAndStart 44000
         
@@ -106,7 +106,7 @@ type TCPListenerServerTests () as x =
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
-    [<TestCategory(TCPListenerServerTest)>]
+    [<TestCategory(ClientDiscoveryServerTest)>]
     member x.``Start Server, Client Connects, then Closes Connection`` () =
         let server = createServerAndStart 44000
         
@@ -124,7 +124,7 @@ type TCPListenerServerTests () as x =
 
     [<TestMethod>]
     [<TestCategory(Networking)>]
-    [<TestCategory(TCPListenerServerTest)>]
+    [<TestCategory(ClientDiscoveryServerTest)>]
     member x.``Start Server, Client Connects, Stays Connected for Two Minutes`` () =
         let rec testLoop (server:TCPListenerServer) timeout =
             match DateTime.UtcNow > timeout with

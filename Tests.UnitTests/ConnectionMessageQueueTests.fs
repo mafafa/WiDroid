@@ -199,19 +199,20 @@ type ConnectionMessageQueueTests () as x =
 
         let messageQueue = createMessageQueueAndStart computerClient 44000
 
-        let filePath = @"testFile.txt"
+        let filePath = "testFile.txt"
+        let destFile = "receivedTestFile.txt" 
         let contentBytes = createFileForTest filePath "This is a test file. Please do not mooh in it!"
 
         try
-            let reply = messageQueue.PostAndReply (StartSync [|filePath|])
+            let reply = messageQueue.PostAndReply (StartSync [|(filePath, destFile)|])
             match reply with
             | Error errorInfo ->
                 Assert.Fail (sprintf "There was an error sending file: %s" filePath)
             | _ ->
-                let _ = createFileForTest "receivedTestFile.txt" ""
-                readStreamToFile androidClient "receivedTestFile.txt"
+                let _ = createFileForTest destFile ""   // Create file that shall be overriden, just for cleanup purposes
+                readStreamToFile androidClient
                 
-                let contentReceived = File.ReadAllBytes "receivedTestFile.txt"
+                let contentReceived = File.ReadAllBytes destFile
                 Assert.IsTrue((contentReceived.Length = contentBytes.Length), sprintf "Did not receive all bytes for file: %s" filePath)
                 arrayItemsAreEqual contentBytes contentReceived
         with
@@ -229,10 +230,10 @@ type ConnectionMessageQueueTests () as x =
         | :? TimeoutException as ex ->
             Assert.Fail "Attempt to stop the server failed because of timeout"
 
-    (*[<TestMethod>]
+    [<TestMethod>]
     [<TestCategory(Networking)>]
     [<TestCategory(ConnectionMessageQueueTest)>]
-    member x.``Start Message Queue, Start Sync Message, File doesn't Exist in the Middle`` () =
+    member x.``Start Message Queue, Start Sync Message, Multiple Files`` () =
         let server = createServerAndStart 44000
         
         let androidClient = createClientAndConnect 44000
@@ -240,27 +241,34 @@ type ConnectionMessageQueueTests () as x =
 
         let messageQueue = createMessageQueueAndStart computerClient 44000
 
-        let filePath1 = @"testFile1.txt"
-        let contentBytes = createFileForTest filePath1 "This is a test file. Please do not mooh in it!"
-        let filePath2 = @"testFile2.txt"
-        let contentBytes = createFileForTest filePath2 "Omg, there is a second file!"
-        let fakeFilePath = @"testFileFake.txt"
+        let filePath1 = "testFile1.txt"
+        let destFile1 = "receivedTestFile1.txt" 
+        let contentBytes1 = createFileForTest filePath1 "This is a test file. Please do not mooh in it!"
+        let filePath2 = "testFile2.txt"
+        let destFile2 = "receivedTestFile2.txt" 
+        let contentBytes2 = createFileForTest filePath2 "Omg, there is a second file!"
+        let filePath3 = "testFile3.txt"
+        let destFile3 = "receivedTestFile3.txt" 
+        let contentBytes3 = createFileForTest filePath3 "MUCH FILEZZZZ!"
 
         try
-            let reply = messageQueue.PostAndReply (StartSync [|filePath1; fakeFilePath; filePath2|])
+            let reply = messageQueue.PostAndReply (StartSync [|(filePath1, destFile1); (filePath2, destFile2); (filePath3, destFile3)|])
             match reply with
             | Error errorInfo ->
                 Assert.Fail (sprintf "There was an error sending files")
             | _ ->
-                let _ = createFileForTest "receivedTestFile.txt" ""
-                readStreamToFile (androidClient.GetStream()) "receivedTestFile.txt"
+                Array.iter (fun filePath -> createFileForTest filePath "" |> ignore) [|destFile1; destFile2; destFile3|]   // Create file that shall be overriden, just for cleanup purposes
+                Array.iter (fun _ -> readStreamToFile androidClient) [|destFile1; destFile2; destFile3|]
                 
-                let contentReceived = File.ReadAllBytes @"receivedTestFile.txt"
-                Assert.IsTrue((contentReceived.Length = contentBytes.Length), sprintf "Did not receive all bytes for file: %s" filePath)
-                arrayItemsAreEqual contentBytes contentReceived
+                let assertTest (srcFile, destFile, contentOfFileSent:byte[]) =
+                    let contentReceived = File.ReadAllBytes destFile
+                    Assert.IsTrue((contentReceived.Length = contentOfFileSent.Length), sprintf "Did not receive all bytes for file: %s" srcFile)
+                    arrayItemsAreEqual contentOfFileSent contentReceived
+
+                Array.iter assertTest [|(filePath1, destFile1, contentBytes1); (filePath2, destFile2, contentBytes2); (filePath3, destFile3, contentBytes3)|]
         with
         | :? TimeoutException as ex ->
-            Assert.Fail (sprintf "Attempt to send file: %s timed out." filePath)
+            Assert.Fail (sprintf "Attempt to send files: %A timed out." [|(filePath1, destFile1); (filePath2, destFile2); (filePath3, destFile3)|])
 
         try
             let reply = messageQueue.Stop ()
@@ -268,7 +276,7 @@ type ConnectionMessageQueueTests () as x =
             | Error errorInfo ->
                 Assert.Fail (sprintf "The message queue did not stop successfully: %s" errorInfo.Message)
             | _ ->
-                x.CleanupActions.RemoveAt (x.CleanupActions.Count - 3)
+                x.CleanupActions.RemoveAt (x.CleanupActions.Count - 7)
         with
         | :? TimeoutException as ex ->
-            Assert.Fail "Attempt to stop the server failed because of timeout"*)
+            Assert.Fail "Attempt to stop the server failed because of timeout"
