@@ -19,6 +19,14 @@ namespace WiDroid
     {
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
+            // Create Unity container and load all types
+
+            
+            // Start client discovery server
+            // TODO: Bind discovery port to a setting
+            ClientDiscoveryServer.ClientDiscoveryServer discoveryServer = new ClientDiscoveryServer.ClientDiscoveryServer(44000);
+            discoveryServer.Start();
+
             // Show main window
             MainWindow mainWindow = new MainWindow();
             MainViewModel mainViewModel = new MainViewModel();

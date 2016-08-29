@@ -25,9 +25,6 @@
                 </Style>
             </UniformGrid.Resources>
 
-            <Button>Music</Button>
-            <Button>Pictures</Button>
-            <Button>Videos</Button>
             <Button>Files</Button>
             <Button Command="{Binding NavigateToSettingsCommand}">Settings</Button>
         </UniformGrid>
@@ -38,7 +35,7 @@
                     <Setter Property="Margin" Value="10,0,10,0"/>
                 </Style>
             </DockPanel.Resources>
-            <Button HorizontalAlignment="Right" Padding="25,0,25,0">SYNC</Button>
+            <Button HorizontalAlignment="Right" Padding="25,0,25,0">Devices</Button>
         </DockPanel>
 
         <Separator Grid.Row="1" Grid.ColumnSpan="2"/>

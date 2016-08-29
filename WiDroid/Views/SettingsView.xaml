@@ -33,7 +33,7 @@
 
             <Label Grid.Column="0">Discovery Port:</Label>
             <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left">
-                <TextBox Width="60" Text="TOBEBINDED"/>
+                <TextBox Width="60" Text="{Binding DiscoveryPort}"/>
                 <Image Source="pack://application:,,,/Resources/Icons/icon_help_128x128.png" Stretch="Fill" StretchDirection="UpOnly"/>
             </StackPanel>
 

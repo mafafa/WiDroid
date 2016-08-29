@@ -113,6 +113,10 @@
       <Project>{3b068656-55d5-4ddc-8a77-19ad7caffcc6}</Project>
       <Name>BasicWPF</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Core.Networking\Core.Networking.fsproj">
+      <Project>{4be0a897-f696-4927-b45b-d252471c4ec3}</Project>
+      <Name>Core.Networking</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Icons\icon_help_128x128.png" />

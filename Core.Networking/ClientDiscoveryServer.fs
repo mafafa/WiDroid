@@ -9,7 +9,7 @@ open System.Threading.Tasks
 open NetworkingCommon
 
 
-type TCPListenerServer(discoveryPort:int) =
+type ClientDiscoveryServer(discoveryPort:int) =
     let server = new TcpListener (IPAddress.Loopback, discoveryPort)
 
     let activeConnections = new List<TcpClient>()

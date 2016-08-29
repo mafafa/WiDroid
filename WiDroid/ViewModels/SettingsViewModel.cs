@@ -12,7 +12,12 @@ namespace WiDroid.ViewModels
 {
     public class SettingsViewModel : IViewModel
     {
+        #region Fields
+
+        private int _discoveryPort;
         public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
 
         #region Protected Methods
 
@@ -22,6 +27,23 @@ namespace WiDroid.ViewModels
             if (temp != null)
             {
                 temp(this, new PropertyChangedEventArgs(propertName));
+            }
+        }
+
+        #endregion
+
+        #region Properties
+
+        public int DiscoveryPort
+        {
+            get { return _discoveryPort; }
+            set
+            {
+                if (_discoveryPort != value)
+                {
+                    _discoveryPort = value;
+                    RaisePropertyChanged();
+                }
             }
         }
 

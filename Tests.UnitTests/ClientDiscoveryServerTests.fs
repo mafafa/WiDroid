@@ -21,7 +21,7 @@ type ClientDiscoveryServerTests () as x =
         client
 
     let createServerAndStart port =
-        let server = new TCPListenerServer(44000)
+        let server = new ClientDiscoveryServer(44000)
         server.Start ()
         x.CleanupActions.Add ((fun () -> server.Stop ()), "Stopping Server Used")
         server
@@ -67,7 +67,7 @@ type ClientDiscoveryServerTests () as x =
     [<TestCategory(Networking)>]
     [<TestCategory(ClientDiscoveryServerTest)>]
     member x.``Stop Server Without Starting`` () =
-        let server = new TCPListenerServer(44000)
+        let server = new ClientDiscoveryServer(44000)
         server.Stop ()
 
     [<TestMethod>]
@@ -126,7 +126,7 @@ type ClientDiscoveryServerTests () as x =
     [<TestCategory(Networking)>]
     [<TestCategory(ClientDiscoveryServerTest)>]
     member x.``Start Server, Client Connects, Stays Connected for Two Minutes`` () =
-        let rec testLoop (server:TCPListenerServer) timeout =
+        let rec testLoop (server:ClientDiscoveryServer) timeout =
             match DateTime.UtcNow > timeout with
             | true ->
                 ()
