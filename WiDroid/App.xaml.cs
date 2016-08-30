@@ -5,10 +5,12 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.Practices.Unity;
 
 using BasicWPF.MVVM;
 using WiDroid.Views;
 using WiDroid.ViewModels;
+
 
 namespace WiDroid
 {
@@ -19,23 +21,30 @@ namespace WiDroid
     {
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            // Create Unity container and load all types
+            using (UnityContainer container = new UnityContainer())
+            {
+                // TODO: Load discovery port and other settings
 
-            
-            // Start client discovery server
-            // TODO: Bind discovery port to a setting
-            ClientDiscoveryServer.ClientDiscoveryServer discoveryServer = new ClientDiscoveryServer.ClientDiscoveryServer(44000);
-            discoveryServer.Start();
+                
+                // Create Unity container and load all types
+                container.RegisterType<MainViewModel>();
+                container.RegisterType<SettingsViewModel>(new InjectionProperty("DiscoveryPort", 44000));
 
-            // Show main window
-            MainWindow mainWindow = new MainWindow();
-            MainViewModel mainViewModel = new MainViewModel();
-            mainWindow.DataContext = mainViewModel;
-            mainWindow.ViewModel = mainViewModel;
+                // Start client discovery server
+                ClientDiscoveryServer.ClientDiscoveryServer discoveryServer = new ClientDiscoveryServer.ClientDiscoveryServer(44000);
+                discoveryServer.Start();
 
-            FlowManager.Instance.AppWindow = mainWindow;
+                // Show main window
+                MainWindow mainWindow = new MainWindow();
+                MainViewModel mainViewModel = container.Resolve<MainViewModel>();
+                mainWindow.DataContext = mainViewModel;
+                mainWindow.ViewModel = mainViewModel;
 
-            mainWindow.Show();
+                FlowManager.Instance.AppWindow = mainWindow;
+                FlowManager.Instance.ViewModelContainer = container;
+
+                mainWindow.Show();
+            }
         }
     }
 }

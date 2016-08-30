@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BasicWPF.MVVM;
+using Microsoft.Practices.Unity;
+
 
 namespace BasicWPF.MVVM
 {
@@ -13,6 +14,7 @@ namespace BasicWPF.MVVM
 
         private static FlowManager _instance;
 
+        private UnityContainer _container;
         private IMainWindow _mainWindow;
         private ICollection<IViewModel> _viewModels;
 
@@ -46,7 +48,15 @@ namespace BasicWPF.MVVM
                 }
 
                 // Else, we create a new instance of the viewmodel
-                TViewModel newViewModel = new TViewModel();
+                TViewModel newViewModel;
+                if (_container != null)
+                {
+                    newViewModel = _container.Resolve<TViewModel>();
+                }
+                else
+                {
+                    newViewModel = new TViewModel();
+                }
                 AppWindow.ViewModel.CurrentViewModel = newViewModel;
                 ViewModels.Add(newViewModel);
             }
@@ -66,6 +76,18 @@ namespace BasicWPF.MVVM
                 }
 
                 return _instance;
+            }
+        }
+
+        public UnityContainer ViewModelContainer
+        {
+            get { return _container; }
+            set
+            {
+                if (_container != value)
+                {
+                    _container = value;
+                }
             }
         }
 
