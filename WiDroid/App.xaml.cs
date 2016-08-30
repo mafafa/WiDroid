@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,15 +22,15 @@ namespace WiDroid
         {
             using (UnityContainer container = new UnityContainer())
             {
-                // TODO: Load discovery port and other settings
+                // Load settings
+                int discoveryPort = WiDroid.Properties.Settings.Default.DiscoveryPort;
 
-                
                 // Create Unity container and load all types
                 container.RegisterType<MainViewModel>();
-                container.RegisterType<SettingsViewModel>(new InjectionProperty("DiscoveryPort", 44000));
+                container.RegisterType<SettingsViewModel>(new InjectionProperty("DiscoveryPort", discoveryPort));
 
                 // Start client discovery server
-                ClientDiscoveryServer.ClientDiscoveryServer discoveryServer = new ClientDiscoveryServer.ClientDiscoveryServer(44000);
+                ClientDiscoveryServer.ClientDiscoveryServer discoveryServer = new ClientDiscoveryServer.ClientDiscoveryServer(discoveryPort);
                 discoveryServer.Start();
 
                 // Show main window
