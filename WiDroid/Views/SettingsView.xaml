@@ -12,12 +12,16 @@
             <Setter Property="Width" Value="16" />
             <Setter Property="Margin" Value="10,0,0,0" />
         </Style>
+
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     </UserControl.Resources>
     
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="5*"/>
-            <RowDefinition Height="95*"/>
+            <RowDefinition Height="87*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="8*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*"/>
@@ -41,5 +45,13 @@
                 <Image Source="pack://application:,,,/Resources/Icons/icon_help_128x128.png" Stretch="Fill"/>
             </StackPanel>
         </Grid>
+
+        <Separator Grid.Row="2" Grid.ColumnSpan="2" Visibility="{Binding SettingsHaveChanged, Converter={StaticResource BoolToVisibility}}"/>
+
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" 
+                    Visibility="{Binding SettingsHaveChanged, Converter={StaticResource BoolToVisibility}}">
+            <Button Margin="5" Padding="5" Command="{Binding SaveSettingsCommand}">Save</Button>
+            <Button Margin="5" Padding="5" Command="{Binding RevertSettingsCommand}">Cancel</Button>
+        </StackPanel>
     </Grid>
 </UserControl>
