@@ -42,8 +42,11 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonAdorners\WatermarkAdorner.cs" />
+    <Compile Include="CommonBehaviors\WatermarkBehavior.cs" />
     <Compile Include="CommonConverters\BaseConverter.cs" />
     <Compile Include="CommonValidationRules\IntMinMaxRule.cs" />
     <Compile Include="CommonValidationRules\UIntMinMaxRule.cs" />
