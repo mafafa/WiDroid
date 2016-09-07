@@ -48,6 +48,7 @@
     <Compile Include="CommonAdorners\WatermarkAdorner.cs" />
     <Compile Include="CommonBehaviors\WatermarkBehavior.cs" />
     <Compile Include="CommonConverters\BaseConverter.cs" />
+    <Compile Include="CommonConverters\MultipleBooleanOrConverter.cs" />
     <Compile Include="CommonValidationRules\IntMinMaxRule.cs" />
     <Compile Include="CommonValidationRules\UIntMinMaxRule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
