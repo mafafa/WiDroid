@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WiDroid.Views"
+             xmlns:localConverters="clr-namespace:WiDroid.Views.Converters"
+             xmlns:validationRules="clr-namespace:Helper.CommonValidationRules;assembly=Helper"
              mc:Ignorable="d" 
              d:DesignHeight="720" d:DesignWidth="1280">
     <UserControl.Resources>
@@ -41,16 +43,39 @@
 
             <Label Grid.Column="0">Discovery Port:</Label>
             <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left">
-                <TextBox Width="60" Text="{Binding DiscoveryPort}"/>
+                <TextBox Width="60" Name="textBoxDiscoveryPort">
+                    <TextBox.Text>
+                        <Binding Path="DiscoveryPort">
+                            <Binding.ValidationRules>
+                                <validationRules:UIntMinMaxRule Max="65535"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
                 <Image Source="pack://application:,,,/Resources/Icons/icon_help_128x128.png" Stretch="Fill"/>
             </StackPanel>
         </Grid>
 
-        <Separator Grid.Row="2" Grid.ColumnSpan="2" Visibility="{Binding SettingsHaveChanged, Converter={StaticResource BoolToVisibility}}"/>
+        <Separator Grid.Row="2" Grid.ColumnSpan="2" Visibility="{Binding SettingsCurrentState, Converter={localConverters:SettingsStateToVisibilityConverter}}"/>
 
         <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" 
-                    Visibility="{Binding SettingsHaveChanged, Converter={StaticResource BoolToVisibility}}">
-            <Button Margin="5" Padding="5" Command="{Binding SaveSettingsCommand}">Save</Button>
+                    Visibility="{Binding SettingsCurrentState, Converter={localConverters:SettingsStateToVisibilityConverter}}">
+            <Button Margin="5" Padding="5" Content="Save" Command="{Binding SaveSettingsCommand}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="IsEnabled" Value="False"/>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <!-- Add a condition for each settings which has a validation rule -->
+                                    <Condition Binding="{Binding Path=(Validation.HasError), ElementName=textBoxDiscoveryPort}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
             <Button Margin="5" Padding="5" Command="{Binding RevertSettingsCommand}">Cancel</Button>
         </StackPanel>
     </Grid>

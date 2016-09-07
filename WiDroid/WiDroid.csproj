@@ -76,6 +76,7 @@
     <Compile Include="ViewModels\FileTransferViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Views\Converters\SettingsStateToVisibilityConverter.cs" />
     <Compile Include="Views\FileTransferView.xaml.cs">
       <DependentUpon>FileTransferView.xaml</DependentUpon>
     </Compile>
@@ -142,6 +143,10 @@
     <ProjectReference Include="..\Core.Networking\Core.Networking.fsproj">
       <Project>{4be0a897-f696-4927-b45b-d252471c4ec3}</Project>
       <Name>Core.Networking</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Helper\Helper.csproj">
+      <Project>{499cc2fe-7bd5-45bc-95c7-b7166ece6584}</Project>
+      <Name>Helper</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

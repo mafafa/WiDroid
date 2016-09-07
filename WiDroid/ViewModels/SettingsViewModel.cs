@@ -17,7 +17,9 @@ namespace WiDroid.ViewModels
     {
         #region Fields
 
-        private bool _settingsHaveChanged;
+        public enum SettingsState { Default, Changing, Changed }
+
+        private SettingsState _settingsState;
         private int _discoveryPort;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -28,7 +30,7 @@ namespace WiDroid.ViewModels
 
         public SettingsViewModel()
         {
-            _settingsHaveChanged = false;
+
         }
 
         #endregion
@@ -46,12 +48,19 @@ namespace WiDroid.ViewModels
 
         private void SaveSettings(object param)
         {
-            
+            Properties.Settings.Default.DiscoveryPort = DiscoveryPort;
+            Properties.Settings.Default.Save();
+
+            SettingsCurrentState = SettingsState.Changed;
         }
 
         private void RevertSettings(object param)
         {
+            // We use the fields here since we don't want to set SettingsHaveChanged to true
+            _discoveryPort = Properties.Settings.Default.DiscoveryPort;
+            RaisePropertyChanged("DiscoveryPort");
 
+            SettingsCurrentState = SettingsState.Changed;
         }
 
         #endregion
@@ -68,14 +77,14 @@ namespace WiDroid.ViewModels
             get { return new RelayCommand(RevertSettings); }
         }
 
-        public bool SettingsHaveChanged
+        public SettingsState SettingsCurrentState
         {
-            get { return _settingsHaveChanged; }
+            get { return _settingsState; }
             set
             {
-                if (_settingsHaveChanged != value)
+                if (_settingsState != value)
                 {
-                    _settingsHaveChanged = value;
+                    _settingsState = value;
                     RaisePropertyChanged();
                 }
             }
@@ -90,6 +99,8 @@ namespace WiDroid.ViewModels
                 {
                     _discoveryPort = value;
                     RaisePropertyChanged();
+
+                    SettingsCurrentState = SettingsState.Changing;
                 }
             }
         }

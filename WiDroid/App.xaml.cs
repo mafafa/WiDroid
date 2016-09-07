@@ -27,7 +27,8 @@ namespace WiDroid
 
                 // Create Unity container and load all types
                 container.RegisterType<MainViewModel>();
-                container.RegisterType<SettingsViewModel>(new InjectionProperty("DiscoveryPort", discoveryPort));
+                container.RegisterType<SettingsViewModel>(new InjectionProperty("DiscoveryPort", discoveryPort), 
+                    new InjectionProperty("SettingsCurrentState", SettingsViewModel.SettingsState.Default));
                 container.RegisterType<FileTransferViewModel>();
 
                 // Start client discovery server
